@@ -209,10 +209,14 @@ milliseconds.
         var shouldReplace =
             this._lastChangedAt + this.dwellTime > now;
         this._lastChangedAt = now;
-        if (shouldReplace) {
-          window.history.replaceState({}, '', fullNewUrl);
+        if(window.location.protocol === 'file:') {
+          window.location = fullNewUrl;
         } else {
-          window.history.pushState({}, '', fullNewUrl);
+          if (shouldReplace) {
+            window.history.replaceState({}, '', fullNewUrl);
+          } else {
+            window.history.pushState({}, '', fullNewUrl);
+          }
         }
         this.fire('location-changed', {}, {node: window});
       },
@@ -239,7 +243,11 @@ milliseconds.
         if (href === window.location.href) {
           return;
         }
-        window.history.pushState({}, '', href);
+        if(window.location.protocol === 'file:') {
+          window.location = href;
+        } else {
+          window.history.pushState({}, '', href);
+        }
         this.fire('location-changed', {}, {node: window});
       },
       /**
